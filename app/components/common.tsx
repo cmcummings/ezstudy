@@ -27,11 +27,10 @@ export function VerticalDivider({ height }: { height?: number }) {
 export function Button({ className = "", ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button 
-      className={"text-teal-500 hover:text-teal-300 bg-teal-500/10 hover:bg-teal-300/30 px-3 py-1 rounded-md " + className}
+      className={"px-5 py-2 rounded-md border-teal-700 bg-gradient-to-b from-teal-700 to-teal-600 hover:from-teal-600 hover:to-teal-500 " + className}
       {...rest} />
   );
 }
-
 
 export function Avatar({ src }: { src?: string | null }) {
   return <img 

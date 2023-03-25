@@ -1,9 +1,8 @@
 import type { Response } from "@remix-run/node";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { DbProfile } from "./db.server";
+import type { User } from "~/util/types";
 import { Err, errorResponse, Ok } from "~/util/util.server";
 import { createUserSupabaseClient } from "./db.server";
-import { User } from "~/util/types";
 
 type SignUpCredentials = {
   username: string,
