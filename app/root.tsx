@@ -44,7 +44,7 @@ export default function App() {
       <body className="bg-gray-900 text-white">
         <UserContext.Provider value={user}>
           <Navbar />
-          <main className="mt-10 px-3 xl:px-96">
+          <main className="mt-10 px-3 md:px-40 xl:px-64 2xl:px-96">
             <Outlet />
           </main>
           <ScrollRestoration />

@@ -1,8 +1,8 @@
 import { redirect, Response } from "@remix-run/node";
 import type { ActionArgs } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import { z } from "zod";
-import { Input, Button, ErrorText, HorizontalDivider } from "~/components/common";
+import { Input, Button, ErrorText, HorizontalDivider, LoadingCircle } from "~/components/common";
 import { signUp } from "~/db/user.server";
 import { type ErrorResponse, validateZodSchema } from "~/util/util.server";
 
@@ -52,30 +52,37 @@ export const action = async ({ request }: ActionArgs) => {
 
 export default function Register() {
   const errors: ErrorResponse | undefined = useActionData<typeof action>();
+  const navigation = useNavigation();
 
   const fieldErrors = errors?.validationErrors?.fieldErrors
 
   return (
     <div className="flex flex-col items-center">
-      <Form method="post" className="flex flex-col gap-4 items-start border border-gray-600 rounded-md p-5">
-        <h2 className="text-3xl">Register</h2>
+      <Form method="post" className="flex flex-col gap-4 items-stretch border border-gray-600 rounded-md p-5 w-full sm:w-[400px]">
+        <div>
+          <h2 className="text-3xl">Register</h2>
+          <p>Already have an account? <Link className="text-teal-500 hover:text-teal-300" to="/login">Login</Link>.</p>
+        </div>
         <HorizontalDivider />        
-        <div className="flex flex-col gap-1 items-start">
+        <div className="flex flex-col gap-1 items-stretch">
           <label htmlFor="username">Username</label>
           <Input type="text" name="username" placeholder="Username" />
           {fieldErrors?.username ? <ErrorText text={fieldErrors.username.join("\n")} /> : null}
         </div>
-        <div className="flex flex-col gap-1 items-start">
+        <div className="flex flex-col gap-1 items-stretch">
           <label htmlFor="username">Email</label>
           <Input type="email" name="email" placeholder="Email" />
           {fieldErrors?.email ? <ErrorText text={fieldErrors.email.join("\n")} /> : null}
         </div>
-        <div className="flex flex-col gap-1 items-start">
+        <div className="flex flex-col gap-1 items-stretch">
           <label htmlFor="username">Password</label>
           <Input type="password" name="password" placeholder="Password" />
           {fieldErrors?.password ? <ErrorText text={fieldErrors.password.join("\n")} /> : null}
         </div>
-        <Button type="submit" className="self-end">Register</Button>
+        <Button type="submit" className="self-end flex flex-row items-center gap-3">
+          <p>Register</p>
+          {navigation.state !== "idle" ? <LoadingCircle /> : null}
+        </Button>
       </Form>
     </div>
   )

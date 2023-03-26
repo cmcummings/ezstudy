@@ -20,7 +20,7 @@ export function validateZodSchema<T>(schema: z.ZodSchema<T>, data: unknown) {
 /**
  * A result object that if errored, returns a response that could be returned from a loader/action
  */
-export type APIResult<T, E> = ResultSuccess<T> | ResultError<E>
+export type APIResult<T, E> = ResultSuccess<T> | ResultError<E> 
 export type ResultSuccess<T> = { 
   success: true, 
   data: T

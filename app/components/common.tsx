@@ -1,4 +1,7 @@
+import { motion, useTime, useTransform } from "framer-motion";
 import type { ButtonHTMLAttributes, InputHTMLAttributes } from "react";
+import { IoPersonCircle } from "react-icons/io5";
+import { AiOutlineLoading } from "react-icons/ai";
 
 export function Input({ className = "", ...rest }: InputHTMLAttributes<HTMLInputElement>) {
   return (
@@ -13,15 +16,15 @@ export function ErrorText({ text }: { text: string }) {
     <p className="text-red-400">
       {text}
     </p>
-  )
+  );
 }
 
 export function HorizontalDivider() {
-  return <div className="h-[1px] w-full bg-gray-600" /> 
+  return <div className="h-[1px] w-full bg-gray-600" /> ;
 }
 
 export function VerticalDivider({ height }: { height?: number }) {
-  return <div className={`h-${height ? `[${height}px]` : "full"} w-[1px] bg-gray-600`} />
+  return <div className={`h-${height ? `[${height}px]` : "full"} w-[1px] bg-gray-600`} />;
 }
 
 export function Button({ className = "", ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
@@ -33,8 +36,32 @@ export function Button({ className = "", ...rest }: ButtonHTMLAttributes<HTMLBut
 }
 
 export function Avatar({ src }: { src?: string | null }) {
-  return <img 
-    src={src ?? ""} 
-    alt="avatar"
-    className="rounded-full w-8 h-8" />  
+  if (!src) {
+    return <IoPersonCircle className="rounded-full w-8 h-8" />
+  }
+
+  return (
+    <img 
+      src={src} 
+      alt="avatar"
+      className="rounded-full w-8 h-8" />  
+  );
 }
+
+export function LoadingCircle() {
+  const time = useTime();
+  const rotate = useTransform(
+    time,
+    [0, 2000],
+    [0, 360],
+    { clamp: false }
+  )
+
+  return (
+    <motion.div
+      style={{ rotate }}>
+      <AiOutlineLoading className="w-6 h-6" />
+    </motion.div> 
+  );
+}
+

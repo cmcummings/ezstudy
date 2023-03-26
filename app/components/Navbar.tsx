@@ -19,7 +19,7 @@ export default function Navbar() {
   const logout = useLogout();
 
   return (
-    <nav className="sticky flex flex-row items-center h-16 justify-between border-b border-b-gray-600 px-3 lg:px-96">
+    <nav className="sticky flex flex-row items-center h-16 justify-between border-b border-b-gray-600 px-3 md:px-40 xl:px-64 2xl:px-96">
       <div>
         <Link to="/" className="text-xl"><span className="text-teal-500">EZ</span>STUDY</Link>
       </div>

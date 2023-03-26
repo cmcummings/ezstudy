@@ -1,11 +1,11 @@
-import { json, Response, type LoaderArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { getSetById } from "./sets.server";
-import { useCatch } from "@remix-run/react";
-import { errorResponse, validateZodSchema } from "~/util/util.server";
-import { z } from "zod";
+import { json, } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import { createUserSupabaseClient } from "~/db/db.server";
-import { HorizontalDivider } from "~/components/common";
+import { errorResponse, validateZodSchema } from "~/util/util.server";
+import { getSetById } from "./sets.server";
+import { z } from "zod";
+import { Response } from "@remix-run/node";
 
 const setParamsSchema = z.object({
   id: z.coerce
@@ -36,51 +36,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 }
 
 
-function TermCard({ term, definition }: { term: string, definition: string }) {
-  return <div className="flex flex-col gap-2 items-start border border-gray-600 rounded-md p-5">
-    <div>
-      <p className="text-gray-400">Term</p>
-      <p>{term}</p>
-    </div>
-    <div>
-      <p className="text-gray-400">Definition</p>
-      <p>{definition}</p>
-    </div>
-  </div>
-}
-
 export default function Set() {
   const { set } = useLoaderData<typeof loader>();
 
-  return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-row justify-between">
-        <div>
-          <h1 className="text-3xl">{set.name}</h1>
-          <p>{set.description ?? <i>No description.</i>}</p>
-        </div>
-        <div>
-          <p>Created by {set.creator.username}</p>
-        </div>
-      </div>
-      <HorizontalDivider />
-      <div className="flex flex-col gap-3">
-        {set.terms.map((term, i) => <TermCard key={i} {...term} />)}
-      </div>
-    </div>
-  )
-}
-
-export function CatchBoundary() {
-  const caught = useCatch();
-
-  return (
-    <div>
-      <h1>Caught</h1>
-      <p>Status: {caught.status}</p>
-      <pre>
-        <code>{JSON.stringify(caught.data, null, 2)}</code>
-      </pre>
-    </div>
-  );
+  return <Outlet context={set} />
 }
