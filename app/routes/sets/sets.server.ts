@@ -10,6 +10,7 @@ export async function getSetById(supabase: SupabaseClient, id: number) {
       id,
       name,
       description,
+      public,
       created_at,
       creator_id,
       creator_username,
@@ -39,6 +40,7 @@ export async function getSetById(supabase: SupabaseClient, id: number) {
     },
     id: set.id,
     name: set.name,
+    public: set.public,
     description: set.description,
     createdAt: set.created_at,
     terms: terms
@@ -52,6 +54,7 @@ export async function getSets(supabase: SupabaseClient) {
       id,
       name,
       description,
+      public,
       created_at,
       creator_id,
       creator_username,
@@ -72,6 +75,7 @@ export async function getSets(supabase: SupabaseClient) {
     },
     id: set.id,
     name: set.name,
+    public: set.public,
     description: set.description,
     createdAt: set.created_at
   } as Set))));

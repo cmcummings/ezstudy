@@ -2,6 +2,8 @@ import { motion, useTime, useTransform } from "framer-motion";
 import type { ButtonHTMLAttributes, InputHTMLAttributes } from "react";
 import { IoPersonCircle } from "react-icons/io5";
 import { AiOutlineLoading } from "react-icons/ai";
+import type { RemixLinkProps } from "@remix-run/react/dist/components";
+import { Link } from "@remix-run/react";
 
 export function Input({ className = "", ...rest }: InputHTMLAttributes<HTMLInputElement>) {
   return (
@@ -65,3 +67,12 @@ export function LoadingCircle() {
   );
 }
 
+export function NavLink({ className, children, ...rest }: RemixLinkProps) {
+  return <Link className={"text-teal-500 hover:text-teal-300 bg-teal-500/10 hover:bg-teal-300/30 px-3 py-1 rounded-md " + className} {...rest} >
+    {children}
+  </Link>
+}
+
+export function NavButton({ className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return <button className={"text-teal-500 hover:text-teal-300 bg-teal-500/10 hover:bg-teal-300/30 px-3 py-1 rounded-md " + className} {...rest} />
+}

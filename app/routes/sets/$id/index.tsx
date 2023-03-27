@@ -2,7 +2,7 @@ import type { SetWithTerms } from "~/util/types";
 import { useOutletContext } from "@remix-run/react";
 import { Link } from "@remix-run/react";
 import { cloneElement } from "react";
-import { Avatar, HorizontalDivider } from "~/components/common";
+import { NavLink, Avatar, HorizontalDivider } from "~/components/common";
 import { dateStringToRelativeTimeString } from "~/util/util";
 import { GiCardRandom } from "react-icons/gi";
 import { MdQuiz } from "react-icons/md";
@@ -36,16 +36,17 @@ export default function SetPage() {
     <div className="flex flex-col gap-3">
       <div className="flex flex-row justify-between">
         <div className="flex flex-col items-start">
+          <p className="text-gray-500 uppercase">{set.public ? "Public set" : "Private set"}</p>
           <h1 className="text-3xl">{set.name}</h1>
           <p>{set.description ?? <i>No description.</i>}</p>
         </div>
-        <div className="flex flex-col items-end">
-          <div className="flex flex-row gap-2 items-center">
-            <p>Created by {set.creator.username}</p>
-            <Avatar src={set.creator.avatarUrl} />
-          </div>
-          <p>{dateStringToRelativeTimeString(set.createdAt)}</p>
-          </div>
+        <div className="flex flex-col gap-1 items-end">
+          <p className="text-gray-500 uppercase">Created {dateStringToRelativeTimeString(set.createdAt)} by</p>
+          <NavLink to={`/user/${set.creator.id}`} className="flex flex-row items-center gap-3">
+            <p>{set.creator.username}</p> 
+            <Avatar src={set.creator.avatarUrl} /> 
+          </NavLink>
+        </div>
       </div>
       <HorizontalDivider />
       {/* <h2 className="text-2xl">Study</h2> */}
@@ -66,7 +67,7 @@ export function CatchBoundary() {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <h1>Set could not be found.</h1>
+      <h1>Set is either private or does not exist.</h1>
     </div>
   );
 }

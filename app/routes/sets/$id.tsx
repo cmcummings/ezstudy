@@ -1,5 +1,5 @@
-import { json, } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
+import { json, } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { createUserSupabaseClient } from "~/db/db.server";
 import { errorResponse, validateZodSchema } from "~/util/util.server";
@@ -40,4 +40,15 @@ export default function Set() {
   const { set } = useLoaderData<typeof loader>();
 
   return <Outlet context={set} />
+}
+
+
+export function CatchBoundary() {
+  // const caught = useCatch();
+
+  return (
+    <div className="flex flex-col justify-center items-center">
+      <h1>Set is either private or does not exist.</h1>
+    </div>
+  );
 }

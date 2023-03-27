@@ -15,6 +15,7 @@ export type Set = {
   creator: User,
   id: number,
   name: string,
+  public: boolean,
   description?: string,
   createdAt: string
 };
