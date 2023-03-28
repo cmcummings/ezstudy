@@ -1,6 +1,13 @@
 import { json, type TypedResponse } from "@remix-run/node";
 import type { typeToFlattenedError, z } from "zod";
 
+export function validationErrorResponse<T>(err: z.ZodError<T>) {
+  return json(
+    { success: false, message: "Validation failed.", validationErrors: err.flatten() } as ErrorResponse,
+    { status: 400 }
+  )
+}
+
 export function validateZodSchema<T>(schema: z.ZodSchema<T>, data: unknown) {
   const res = schema.safeParse(data);
   if (res.success) {
@@ -9,10 +16,7 @@ export function validateZodSchema<T>(schema: z.ZodSchema<T>, data: unknown) {
     }
     return Ok<T>(res.data as T);
   } else {
-    return Err(json(
-      { message: "Validation failed.", validationErrors: res.error.flatten() } as ErrorResponse,
-      { status: 400 }
-    ));
+    return Err(validationErrorResponse(res.error));
   }
 }
 
@@ -46,10 +50,14 @@ export function Ok<T>(data: T): ResultSuccess<T> {
   return { success: true, data: data }
 }
 
+export type PostResponse = {
+  success: true
+} | ErrorResponse
 
-export type ErrorResponse = {
+export interface ErrorResponse {
+  success: false,
   message: string,
   validationErrors?: typeToFlattenedError<any>
 }
 
-export const errorResponse = (message: string, status?: number) => json<ErrorResponse>({ message: message }, { status: status });
+export const errorResponse = (message: string, status?: number) => json<ErrorResponse>({ success: false, message: message }, { status: status });

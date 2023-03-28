@@ -1,22 +1,29 @@
-import type { SetWithTerms } from "~/util/types";
-import { useOutletContext } from "@remix-run/react";
+import type { SetWithTerms, Term } from "~/util/types";
+import type { PostResponse } from "~/util/util.server";
+import { useCatch, useFetcher, useOutletContext } from "@remix-run/react";
 import { Link } from "@remix-run/react";
-import { cloneElement } from "react";
-import { NavLink, Avatar, HorizontalDivider } from "~/components/common";
+import { cloneElement, useEffect, useRef, useState } from "react";
+import { Modal, LinkButton, Button, Avatar, HorizontalDivider, Input, SubmitButton, Errors } from "~/components/common";
 import { dateStringToRelativeTimeString } from "~/util/util";
 import { GiCardRandom } from "react-icons/gi";
-import { MdQuiz } from "react-icons/md";
+import { MdAdd, MdEdit, MdQuiz } from "react-icons/md";
+import { useUser } from "~/user";
 
-function TermCard({ term, definition }: { term: string, definition: string }) {
-  return <div className="flex flex-col gap-2 items-start border border-gray-600 bg-gray-800 rounded-md p-5">
+function TermCard({ term, editable }: { term: Term, editable: boolean }) {
+  return <div className="group relative flex flex-col gap-2 items-start border border-gray-600 bg-gray-800 rounded-md p-5">
     <div>
       <p className="text-gray-400">Term</p>
-      <p>{term}</p>
+      <p>{term.term}</p>
     </div>
     <div>
       <p className="text-gray-400">Definition</p>
-      <p>{definition}</p>
+      <p>{term.definition}</p>
     </div>
+    {editable 
+    ? <div className="absolute top-[3px] right-[3px] hidden group-hover:block">
+      <EditTerm term={term} />
+    </div> 
+    : null }
   </div>
 }
 
@@ -29,8 +36,136 @@ function StudyOption({ link, label, icon }: { link: string, label: string, icon:
   );
 }
 
+function EditSet({ set }: { set: SetWithTerms }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const $form = useRef<HTMLFormElement>(null);
+  const fetcher = useFetcher();
+  const data: PostResponse = fetcher.data;
+
+  const [name, setName] = useState(set.name);
+  const [description, setDescription] = useState(set.description || "");
+  const [isPublic, setPublic] = useState(set.public);
+
+  useEffect(() => {
+    if (fetcher.state === "loading") {
+      setModalOpen(false);
+    }
+  }, [fetcher.state])
+
+  return <>
+    <Button className="flex flex-row gap-2 items-center" onClick={() => setModalOpen(true)}><MdEdit /> Edit</Button>
+    <Modal isOpen={modalOpen}>
+      <fetcher.Form 
+        ref={$form}
+        method="post"
+        action={`/api/sets/${set.id}/update`}
+        className="flex flex-col gap-2">
+
+        <label htmlFor="name">Name</label>
+        <Input name="name" value={name} onChange={e => setName(e.currentTarget.value)}/> 
+        <Errors errors={!data?.success ? data?.validationErrors?.fieldErrors.name : undefined} />
+
+        <label htmlFor="description">Description</label>
+        <Input name="description" value={description} onChange={e => setDescription(e.currentTarget.value)} />
+        <Errors errors={!data?.success ? data?.validationErrors?.fieldErrors.description : undefined} />
+
+        <div className="flex flex-row gap-2 items-center">
+          <p>Public</p>
+          <input name="public" type="checkbox" checked={isPublic} onChange={e => setPublic(e.currentTarget.checked)} />
+        </div>
+
+        <div className="flex flex-row gap-2">
+          <Button onClick={() => setModalOpen(false)}>Cancel</Button>
+          <SubmitButton loading={fetcher.state !== "idle"}>Save</SubmitButton>
+        </div>
+      </fetcher.Form>
+    </Modal>
+  </>
+}
+
+function NewTerm({ setId }: { setId: number }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const $form = useRef<HTMLFormElement>(null);
+  const fetcher = useFetcher();
+  const data: PostResponse = fetcher.data;
+
+  useEffect(() => {
+    if (fetcher.state === "loading") {
+      setModalOpen(false);
+    }
+  }, [fetcher.state])
+
+  return <>
+    <Button className="self-center flex flex-row gap-1 items-center" onClick={() => setModalOpen(true)}><MdAdd /> New Term</Button>
+    <Modal isOpen={modalOpen}>
+      <fetcher.Form 
+        ref={$form}
+        method="post"
+        action={`/api/sets/${setId}/add-term`}
+        className="flex flex-col gap-2">
+
+        <label htmlFor="term">Term</label>
+        <Input name="term" /> 
+        <Errors errors={!data?.success ? data?.validationErrors?.fieldErrors.term : undefined} />
+
+        <label htmlFor="definition">Definition</label>
+        <Input name="definition" />
+        <Errors errors={!data?.success ? data?.validationErrors?.fieldErrors.definition : undefined} />
+
+        <div className="flex flex-row gap-2">
+          <Button onClick={() => setModalOpen(false)}>Cancel</Button>
+          <SubmitButton loading={fetcher.state !== "idle"}>Save</SubmitButton>
+        </div>
+      </fetcher.Form>
+    </Modal>
+  </>
+}
+
+function EditTerm({ term }: { term: Term }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const $form = useRef<HTMLFormElement>(null);
+  const fetcher = useFetcher();
+  const data: PostResponse = fetcher.data;
+
+  const [termText, setTermText] = useState(term.term);
+  const [definition, setDefinition] = useState(term.definition);
+
+  useEffect(() => {
+    if (fetcher.state === "loading") {
+      setModalOpen(false);
+    }
+  }, [fetcher.state])
+
+  return <>
+    <Button className="self-center flex flex-row gap-1 items-center" onClick={() => setModalOpen(true)}><MdEdit /> Edit</Button>
+    <Modal isOpen={modalOpen}>
+      <fetcher.Form 
+        ref={$form}
+        method="post"
+        action={`/api/terms/${term.id}/update`}
+        className="flex flex-col gap-2">
+
+        <label htmlFor="term">Term</label>
+        <Input name="term" value={termText} onChange={e => setTermText(e.currentTarget.value)} /> 
+        <Errors errors={!data?.success ? data?.validationErrors?.fieldErrors.term : undefined} />
+
+        <label htmlFor="definition">Definition</label>
+        <Input name="definition" value={definition} onChange={e => setDefinition(e.currentTarget.value)}/>
+        <Errors errors={!data?.success ? data?.validationErrors?.fieldErrors.definition : undefined} />
+
+        <div className="flex flex-row gap-2">
+          <Button onClick={() => setModalOpen(false)}>Cancel</Button>
+          <SubmitButton loading={fetcher.state !== "idle"}>Save</SubmitButton>
+        </div>
+      </fetcher.Form>
+    </Modal>
+  </>
+}
 export default function SetPage() {
   const set = useOutletContext<SetWithTerms>();
+  const user = useUser();
+
+  const editable = set.creator.id === user?.id;
 
   return (
     <div className="flex flex-col gap-3">
@@ -38,14 +173,15 @@ export default function SetPage() {
         <div className="flex flex-col items-start">
           <p className="text-gray-500 uppercase">{set.public ? "Public set" : "Private set"}</p>
           <h1 className="text-3xl">{set.name}</h1>
-          <p>{set.description ?? <i>No description.</i>}</p>
+          <p>{(!set.description || set.description === "") ? <i>No description.</i> : set.description}</p>
         </div>
         <div className="flex flex-col gap-1 items-end">
           <p className="text-gray-500 uppercase">Created {dateStringToRelativeTimeString(set.createdAt)} by</p>
-          <NavLink to={`/user/${set.creator.id}`} className="flex flex-row items-center gap-3">
+          <LinkButton to={`/user/${set.creator.username}`} className="flex flex-row items-center gap-3">
             <p>{set.creator.username}</p> 
             <Avatar src={set.creator.avatarUrl} /> 
-          </NavLink>
+          </LinkButton>
+          {editable ? <EditSet set={set} /> : null}
         </div>
       </div>
       <HorizontalDivider />
@@ -56,18 +192,21 @@ export default function SetPage() {
       </div>
       <HorizontalDivider />
       <div className="flex flex-col gap-3">
-        {set.terms.map((term, i) => <TermCard key={i} {...term} />)}
+        {set.terms.map((term, i) => <TermCard key={i} term={term} editable={editable} />)}
+        <NewTerm setId={set.id} />
       </div>
     </div>
   )
 }
 
 export function CatchBoundary() {
-  // const caught = useCatch();
+  const caught = useCatch();
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <h1>Set is either private or does not exist.</h1>
+      {caught.status === 404
+      ? <h1>Set is either private or does not exist.</h1>
+      : <h1>An error occurred.</h1>}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import type { SetWithTerms, Term } from "~/util/types";
 import { AnimatePresence, AnimationProps, wrap } from "framer-motion";
 import { Link, useOutletContext } from "@remix-run/react";
-import { ButtonHTMLAttributes, cloneElement, useState } from "react";
+import { ButtonHTMLAttributes, cloneElement, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MdNavigateBefore, MdNavigateNext, MdOutlineArrowBack } from "react-icons/md";
 import { Button, HorizontalDivider } from "~/components/common";
@@ -60,6 +60,11 @@ function Flashcard({ terms }: { terms: Term[] }) {
     setTermIdx(([last, _]) => [last - 1, false]);
     setSide(false);
   }
+
+  useEffect(() => {
+    setTermIdx([0, true]);
+    setSide(false);
+  }, [terms]);
 
   return (
     <div className="flex flex-col gap-5">

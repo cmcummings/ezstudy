@@ -4,6 +4,7 @@ import { IoPersonCircle } from "react-icons/io5";
 import { AiOutlineLoading } from "react-icons/ai";
 import type { RemixLinkProps } from "@remix-run/react/dist/components";
 import { Link } from "@remix-run/react";
+import ReactModal from "react-modal";
 
 export function Input({ className = "", ...rest }: InputHTMLAttributes<HTMLInputElement>) {
   return (
@@ -21,20 +22,16 @@ export function ErrorText({ text }: { text: string }) {
   );
 }
 
+export function Errors({ errors }: { errors?: string[] }) {
+  return errors ? <ErrorText text={errors.join("\n")} /> : null;
+}
+
 export function HorizontalDivider() {
   return <div className="h-[1px] w-full bg-gray-600" /> ;
 }
 
 export function VerticalDivider({ height }: { height?: number }) {
   return <div className={`h-${height ? `[${height}px]` : "full"} w-[1px] bg-gray-600`} />;
-}
-
-export function Button({ className = "", ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button 
-      className={"px-5 py-2 rounded-md border-teal-700 bg-gradient-to-b from-teal-700 to-teal-600 hover:from-teal-600 hover:to-teal-500 " + className}
-      {...rest} />
-  );
 }
 
 export function Avatar({ src }: { src?: string | null }) {
@@ -67,12 +64,31 @@ export function LoadingCircle() {
   );
 }
 
-export function NavLink({ className, children, ...rest }: RemixLinkProps) {
+export function LinkButton({ className, children, ...rest }: RemixLinkProps) {
   return <Link className={"text-teal-500 hover:text-teal-300 bg-teal-500/10 hover:bg-teal-300/30 px-3 py-1 rounded-md " + className} {...rest} >
     {children}
   </Link>
 }
 
-export function NavButton({ className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
+export function Button({ className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return <button className={"text-teal-500 hover:text-teal-300 bg-teal-500/10 hover:bg-teal-300/30 px-3 py-1 rounded-md " + className} {...rest} />
+}
+
+export function SubmitButton({ className, children, loading, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { loading: boolean }) {
+  return (
+    <Button type="submit" className={`self-end flex flex-row items-center gap-3 ${children}`} disabled={loading} {...rest}>
+      <div>{children}</div>
+      {loading ? <LoadingCircle /> : null}
+    </Button>
+  )
+}
+
+export function Modal({ className, overlayClassName, ...props }: ReactModal.Props) {
+  return (
+    <ReactModal 
+      className="bg-gray-900 border border-gray-600 rounded-md p-5 grow" 
+      overlayClassName="fixed bg-gray-700/20 w-screen h-screen top-0 flex flex-row items-center px-3 md:px-40 lg:px-64 2xl:px-96"
+      ariaHideApp={false} 
+      {...props}/>
+  );
 }

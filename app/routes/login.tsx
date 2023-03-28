@@ -2,7 +2,7 @@ import { type ActionArgs, redirect } from "@remix-run/node";
 import { Response } from "@remix-run/node";
 import { useActionData, Form, useNavigation, Link } from "@remix-run/react";
 import { z } from "zod";
-import { ErrorText, HorizontalDivider, Input, Button, LoadingCircle } from "~/components/common";
+import { ErrorText, HorizontalDivider, Input, SubmitButton } from "~/components/common";
 import { login } from "~/db/user.server";
 import { type ErrorResponse, validateZodSchema } from "~/util/util.server";
 
@@ -63,10 +63,7 @@ export default function Login() {
           <Input type="password" name="password" placeholder="Password" />
           {fieldErrors?.password ? <ErrorText text={fieldErrors.password.join("\n")} /> : null}
         </div>
-        <Button type="submit" className="self-end flex flex-row items-center gap-3">
-          <p>Login</p>
-          {navigation.state !== "idle" ? <LoadingCircle /> : null}
-        </Button>
+        <SubmitButton loading={navigation.state !== "idle"}>Login</SubmitButton>
       </Form>
     </div>
   );

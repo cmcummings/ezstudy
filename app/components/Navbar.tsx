@@ -1,7 +1,7 @@
 import { Link } from "@remix-run/react";
 import { useLogout, useUser } from "~/user"
 import { Avatar, VerticalDivider } from "./common";
-import { NavLink, NavButton } from "./common";
+import { LinkButton, Button } from "./common";
 
 
 export default function Navbar() {
@@ -17,17 +17,17 @@ export default function Navbar() {
       { 
         user
         ? <div className="flex flex-row items-center gap-3">
-            <NavLink to="/sets" className="flex flex-row items-center gap-3">
+            <LinkButton to="/sets" className="flex flex-row items-center gap-3">
               <p>{user.username}</p>
               <Avatar src={user.avatarUrl} />
-            </NavLink>
+            </LinkButton>
             <VerticalDivider height={15} />
-            <NavButton onClick={logout}>Logout</NavButton>
+            <Button onClick={logout}>Logout</Button>
           </div>
         : <div className="flex flex-row items-center gap-3">
-            <NavLink to="/login">Login</NavLink> 
+            <LinkButton to="/login">Login</LinkButton> 
             <span> or </span> 
-            <NavLink to="/register">Register</NavLink>
+            <LinkButton to="/register">Register</LinkButton>
           </div>
       } 
       </div>

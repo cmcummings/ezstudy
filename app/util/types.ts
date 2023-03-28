@@ -1,4 +1,4 @@
-
+// Shared types used by server and client
 
 export type User = {
   id: string,
@@ -7,6 +7,7 @@ export type User = {
 };
 
 export type Term = {
+  id: string,
   term: string,
   definition: string,
 };

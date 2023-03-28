@@ -13,6 +13,6 @@ export function useLogout() {
   const submit = useSubmit();
 
   return () => {
-    submit(null, { method: "post", action: "/api/logout" });
+    submit(null, { method: "post", action: "/api/auth/logout" });
   }
 }

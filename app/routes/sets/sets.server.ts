@@ -16,11 +16,13 @@ export async function getSetById(supabase: SupabaseClient, id: number) {
       creator_username,
       creator_avatar_url,
       terms (
+        id,
         term,
         definition
       ) 
     `)
     .eq("id", id)
+    .order('id', { foreignTable: 'terms', ascending: true })
     .limit(1)
     .single();
  
@@ -79,4 +81,54 @@ export async function getSets(supabase: SupabaseClient) {
     description: set.description,
     createdAt: set.created_at
   } as Set))));
+}
+
+
+type SetUpdateableAttributes = {
+  name?: string,
+  description?: string,
+  public?: boolean
+}
+
+export async function updateSet(supabase: SupabaseClient, id: string | number, edits: SetUpdateableAttributes) {
+  const result = await supabase
+    .from("sets")
+    .update(edits)
+    .eq("id", id);
+
+  if (result.error) {
+    return Err(errorResponse("Failed to update set.", 500));
+  }
+
+  return Ok(true);
+}
+
+export async function insertTerm(supabase: SupabaseClient, setId: string | number, term: { term: string, definition: string }) {
+  const result = await supabase
+    .from("terms")
+    .insert({
+      set_id: setId,
+      ...term
+    })
+
+  if (result.error) {
+    return Err(errorResponse("Failed to insert term.", 500));
+  }
+
+  return Ok(true);
+}
+
+export async function updateTerm(supabase: SupabaseClient, termId: string | number, term: { term: string, definition: string }) {
+  const result = await supabase
+    .from("terms")
+    .update({
+      ...term
+    })
+    .eq("id", termId)
+
+  if (result.error) {
+    return Err(errorResponse("Failed to insert term.", 500));
+  }
+
+  return Ok(true);
 }
