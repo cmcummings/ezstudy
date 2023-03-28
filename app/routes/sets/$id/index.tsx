@@ -29,7 +29,7 @@ function TermCard({ term, editable }: { term: Term, editable: boolean }) {
 
 function StudyOption({ link, label, icon }: { link: string, label: string, icon: JSX.Element }) {
   return (
-    <Link to={link} className="bg-teal-800 border border-teal-600 hover:bg-teal-700 hover:border-teal-500 rounded-md p-3 flex flex-row gap-2 items-center cursor-pointer">
+    <Link to={link} className="bg-teal-800 border border-teal-600 hover:bg-teal-700 hover:border-teal-500 rounded-md p-3 flex flex-row gap-2 justify-center items-center cursor-pointer">
       {cloneElement(icon, { className: "w-8 h-8" })}
       <p className="text-xl">{label}</p>
     </Link>
@@ -186,14 +186,14 @@ export default function SetPage() {
       </div>
       <HorizontalDivider />
       {/* <h2 className="text-2xl">Study</h2> */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <StudyOption link="flashcards" label="Flashcards" icon={<GiCardRandom />} />
         <StudyOption link="quiz" label="Quiz" icon={<MdQuiz />} />
       </div>
       <HorizontalDivider />
       <div className="flex flex-col gap-3">
         {set.terms.map((term, i) => <TermCard key={i} term={term} editable={editable} />)}
-        <NewTerm setId={set.id} />
+        {editable ? <NewTerm setId={set.id} /> : null}
       </div>
     </div>
   )

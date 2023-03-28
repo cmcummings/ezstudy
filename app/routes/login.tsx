@@ -3,6 +3,7 @@ import { Response } from "@remix-run/node";
 import { useActionData, Form, useNavigation, Link } from "@remix-run/react";
 import { z } from "zod";
 import { ErrorText, HorizontalDivider, Input, SubmitButton } from "~/components/common";
+import { createUserSupabaseClient } from "~/db/db.server";
 import { login } from "~/db/user.server";
 import { type ErrorResponse, validateZodSchema } from "~/util/util.server";
 
@@ -20,6 +21,15 @@ const loginFormSchema = z.object({
     required_error: "Password is required to log in."
   })
 }) 
+
+export const loader = async({ request }: ActionArgs) => {
+  const response = new Response();
+  const supabase = createUserSupabaseClient(request, response);
+  const user = await supabase.auth.getUser();
+  if (!user.error && user.data.user) {
+    return redirect("/sets");
+  }
+}
 
 export const action = async ({ request }: ActionArgs) => {
   const body = Object.fromEntries(await request.formData());

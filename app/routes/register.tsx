@@ -5,6 +5,7 @@ import { z } from "zod";
 import { Input, ErrorText, HorizontalDivider, SubmitButton } from "~/components/common";
 import { signUp } from "~/db/user.server";
 import { type ErrorResponse, validateZodSchema } from "~/util/util.server";
+import { createUserSupabaseClient } from "~/db/db.server";
 
 const registerFormSchema = z.object({
   username: z
@@ -29,7 +30,16 @@ const registerFormSchema = z.object({
   })
   .min(5, "Password must be at least 5 characters long.")
   .max(40, "Password must be less than 40 characters long.")
-}) 
+})
+
+export const loader = async({ request }: ActionArgs) => {
+  const response = new Response();
+  const supabase = createUserSupabaseClient(request, response);
+  const user = await supabase.auth.getUser();
+  if (!user.error && user.data.user) {
+    return redirect("/sets");
+  }
+}
 
 export const action = async ({ request }: ActionArgs) => {
   const body = Object.fromEntries(await request.formData());
