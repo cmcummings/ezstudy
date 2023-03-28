@@ -114,7 +114,7 @@ function NewTerm({ setId }: { setId: number }) {
 
         <div className="flex flex-row gap-2">
           <Button onClick={() => setModalOpen(false)}>Cancel</Button>
-          <SubmitButton loading={fetcher.state !== "idle"}>Save</SubmitButton>
+          <SubmitButton loading={fetcher.state !== "idle"}>Create</SubmitButton>
         </div>
       </fetcher.Form>
     </Modal>
@@ -177,10 +177,10 @@ export default function SetPage() {
         </div>
         <div className="flex flex-col gap-1 items-end">
           <p className="text-gray-500 uppercase">Created {dateStringToRelativeTimeString(set.createdAt)} by</p>
-          <LinkButton to={`/user/${set.creator.username}`} className="flex flex-row items-center gap-3">
+          <Button className="flex flex-row items-center gap-3">
             <p>{set.creator.username}</p> 
             <Avatar src={set.creator.avatarUrl} /> 
-          </LinkButton>
+          </Button>
           {editable ? <EditSet set={set} /> : null}
         </div>
       </div>

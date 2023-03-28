@@ -29,6 +29,8 @@ export const loader = async({ request }: ActionArgs) => {
   if (!user.error && user.data.user) {
     return redirect("/sets");
   }
+
+  return null;
 }
 
 export const action = async ({ request }: ActionArgs) => {
@@ -74,6 +76,11 @@ export default function Login() {
           {fieldErrors?.password ? <ErrorText text={fieldErrors.password.join("\n")} /> : null}
         </div>
         <SubmitButton loading={navigation.state !== "idle"}>Login</SubmitButton>
+        <div>
+          <p>Test account:</p>
+          <p>connormcummings@gmail.com</p>
+          <p>mcXJ82EGUtEzZM6</p>
+        </div>
       </Form>
     </div>
   );

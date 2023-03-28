@@ -39,6 +39,8 @@ export const loader = async({ request }: ActionArgs) => {
   if (!user.error && user.data.user) {
     return redirect("/sets");
   }
+
+  return null;
 }
 
 export const action = async ({ request }: ActionArgs) => {

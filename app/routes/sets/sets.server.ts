@@ -3,6 +3,32 @@ import { getAvatarUrl } from "~/db/user.server";
 import type { Set, Term } from "~/util/types";
 import { Err, errorResponse, Ok } from "~/util/util.server";
 
+type InitialSetAttributes = {
+  name: string,
+  description?: string
+  public?: boolean
+}
+
+export async function insertSet(supabase: SupabaseClient, creatorId: string | number, props: InitialSetAttributes) {
+  const result = await supabase
+    .from("sets")
+    .insert({
+      creator_id: creatorId,
+      ...props
+    })
+    .select(`id`)
+    .limit(1)
+    .single()
+
+  if (result.error) {
+    return Err(errorResponse("Could not insert a new set.", 500))
+  }
+
+  return Ok({
+    id: result.data.id
+  })
+}
+
 export async function getSetById(supabase: SupabaseClient, id: number) {
   const setResult = await supabase
     .from("sets_with_profiles")
@@ -49,7 +75,7 @@ export async function getSetById(supabase: SupabaseClient, id: number) {
   } as Set & { terms: Term[] });
 }
 
-export async function getSets(supabase: SupabaseClient) {
+export async function getSetsByCreatorId(supabase: SupabaseClient, creatorId: string | number) {
   const setsResult = await supabase
     .from("sets_with_profiles")
     .select(`
@@ -61,7 +87,8 @@ export async function getSets(supabase: SupabaseClient) {
       creator_id,
       creator_username,
       creator_avatar_url 
-    `);
+    `)
+    .eq("creator_id", creatorId);
   
   if (setsResult.error) {
     return Err(errorResponse("Failed to get sets.", 404));

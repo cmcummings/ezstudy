@@ -18,10 +18,8 @@ export default function Navbar() {
         user
         ? <div className="flex flex-row items-center gap-3">
             <LinkButton to="/sets" className="flex flex-row items-center gap-3">
-              <p>{user.username}</p>
-              <Avatar src={user.avatarUrl} />
+              <p>Your Sets</p>
             </LinkButton>
-            <VerticalDivider height={15} />
             <Button onClick={logout}>Logout</Button>
           </div>
         : <div className="flex flex-row items-center gap-3">
