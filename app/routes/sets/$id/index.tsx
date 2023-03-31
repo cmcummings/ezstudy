@@ -1,12 +1,12 @@
 import type { SetWithTerms, Term } from "~/util/types";
 import type { PostResponse } from "~/util/util.server";
-import { useCatch, useFetcher, useOutletContext } from "@remix-run/react";
+import { useCatch, useFetcher, useOutletContext, useSubmit } from "@remix-run/react";
 import { Link } from "@remix-run/react";
 import { cloneElement, useEffect, useRef, useState } from "react";
 import { Modal, LinkButton, Button, Avatar, HorizontalDivider, Input, SubmitButton, Errors } from "~/components/common";
 import { dateStringToRelativeTimeString } from "~/util/util";
 import { GiCardRandom } from "react-icons/gi";
-import { MdAdd, MdEdit, MdQuiz } from "react-icons/md";
+import { MdAdd, MdDelete, MdEdit, MdQuiz } from "react-icons/md";
 import { useUser } from "~/user";
 
 function TermCard({ term, editable }: { term: Term, editable: boolean }) {
@@ -20,8 +20,9 @@ function TermCard({ term, editable }: { term: Term, editable: boolean }) {
       <p>{term.definition}</p>
     </div>
     {editable 
-    ? <div className="absolute top-[3px] right-[3px] hidden group-hover:block">
+    ? <div className="absolute top-[3px] right-[3px] hidden group-hover:flex flex-row gap-1">
       <EditTerm term={term} />
+      <DeleteTerm termId={term.id} />
     </div> 
     : null }
   </div>
@@ -161,6 +162,31 @@ function EditTerm({ term }: { term: Term }) {
     </Modal>
   </>
 }
+
+function DeleteTerm({ termId }: { termId: number }) {
+  const fetcher = useFetcher();
+
+  function deleteTerm() {
+    if (confirm("Are you sure you want to delete this term?")) {
+      fetcher.submit(null, { method: "post", action: `/api/terms/${termId}/delete` })
+    }
+  }
+
+  return <Button onClick={deleteTerm} className="flex flex-row gap-1 items-center"><MdDelete />Delete</Button>
+}
+
+function DeleteSet({ setId }: { setId: number }) {
+  const submit = useSubmit();
+
+  function deleteSet() {
+    if (confirm("Are you sure you want to delete this set?")) {
+      submit(null, { method: "post", action: `/api/sets/${setId}/delete` })
+    }
+  }
+
+  return <Button onClick={deleteSet} className="flex flex-row gap-1 items-center"><MdDelete />Delete</Button>
+}
+
 export default function SetPage() {
   const set = useOutletContext<SetWithTerms>();
   const user = useUser();
@@ -176,12 +202,20 @@ export default function SetPage() {
           <p>{(!set.description || set.description === "") ? <i>No description.</i> : set.description}</p>
         </div>
         <div className="flex flex-col gap-1 items-end">
-          <p className="text-gray-500 uppercase">Created {dateStringToRelativeTimeString(set.createdAt)} by</p>
-          <Button className="flex flex-row items-center gap-3">
-            <p>{set.creator.username}</p> 
-            <Avatar src={set.creator.avatarUrl} /> 
-          </Button>
-          {editable ? <EditSet set={set} /> : null}
+          <div className="flex flex-row gap-2 items-center">
+            <p className="text-gray-500 uppercase">Created {dateStringToRelativeTimeString(set.createdAt)} by</p>
+            <Button className="flex flex-row items-center gap-3">
+              <p>{set.creator.username}</p> 
+            </Button>
+          </div>
+          {
+            editable 
+            ? <div className="flex flex-row gap-1">
+                <EditSet set={set} /> 
+                <DeleteSet setId={set.id} />
+              </div>
+            : null
+          }
         </div>
       </div>
       <HorizontalDivider />

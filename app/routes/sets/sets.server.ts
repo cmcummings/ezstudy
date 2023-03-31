@@ -130,6 +130,19 @@ export async function updateSet(supabase: SupabaseClient, id: string | number, e
   return Ok(true);
 }
 
+export async function deleteSet(supabase: SupabaseClient, id: string | number) {
+  const result = await supabase
+    .from("sets")
+    .delete()
+    .eq("id", id);
+
+  if (result.error) {
+    return Err(errorResponse("Failed to delete set.", 500));
+  }
+
+  return Ok(true);
+}
+
 export async function insertTerm(supabase: SupabaseClient, setId: string | number, term: { term: string, definition: string }) {
   const result = await supabase
     .from("terms")
@@ -155,6 +168,19 @@ export async function updateTerm(supabase: SupabaseClient, termId: string | numb
 
   if (result.error) {
     return Err(errorResponse("Failed to insert term.", 500));
+  }
+
+  return Ok(true);
+}
+
+export async function deleteTerm(supabase: SupabaseClient, id: string | number) {
+  const result = await supabase
+    .from("terms")
+    .delete()
+    .eq("id", id);
+
+  if (result.error) {
+    return Err(errorResponse("Failed to delete term.", 500));
   }
 
   return Ok(true);

@@ -7,7 +7,7 @@ export type User = {
 };
 
 export type Term = {
-  id: string,
+  id: number,
   term: string,
   definition: string,
 };
