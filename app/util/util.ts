@@ -13,7 +13,7 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
  */
 export function dateStringToRelativeTimeString(dateString: string) {
   const date = new Date(dateString);
-  const secondsPast = Math.floor((Date.now() - date.valueOf())/MS_PER_SECOND);
+  const secondsPast = Math.floor((Date.now() - date.valueOf()) / MS_PER_SECOND);
 
   if (secondsPast < SECONDS_PER_MINUTE) {
     return `${secondsPast} sec ago`
@@ -52,4 +52,14 @@ export function shuffleArray<T>(arr: Array<T>) {
   }
 
   return arr;
+}
+
+
+export function randRange(min: number, max: number) {
+  return min + Math.random() * (max - min)
+}
+
+
+export function getRandomValue<T>(arr: Array<T>): T {
+  return arr[Math.floor(randRange(0, arr.length))];
 }

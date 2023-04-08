@@ -46,7 +46,7 @@ const cardVariants: AnimationProps["variants"] = {
 
 function Flashcard({ terms }: { terms: Term[] }) {
   const [[termIdxUnwrapped, direction], setTermIdx] = useState([0, true]); // The term to display and the direction it's going in
-  const [side, setSide] = useState(false); // The side of the card to display
+  const [side, setSide] = useState(true); // The side of the card to display
 
   const termIdx = wrap(0, terms.length, termIdxUnwrapped);
   const term = terms[termIdx];
@@ -72,7 +72,7 @@ function Flashcard({ terms }: { terms: Term[] }) {
       <div className="flex flex-col items-center overflow-hidden gap-3">
         <div className="relative w-[75%] lg:w-[50%] aspect-[2]">
           <AnimatePresence initial={false} custom={direction}>
-            <motion.div 
+            <motion.div
               key={termIdxUnwrapped}
               className="absolute bg-gray-800 p-5 w-full h-full border border-gray-600 rounded-md hover:cursor-pointer flex justify-center items-center"
               transition={{ x: { type: "spring", stiffness: 300, damping: 30 } }}
@@ -90,7 +90,7 @@ function Flashcard({ terms }: { terms: Term[] }) {
         </div>
         <div className="flex flex-row items-center gap-5">
           <NavigationButton onClick={prevTerm} icon={<MdNavigateBefore />} />
-          <p className="text-2xl">{termIdx + 1} / {terms.length}</p> 
+          <p className="text-2xl">{termIdx + 1} / {terms.length}</p>
           <NavigationButton onClick={nextTerm} icon={<MdNavigateNext />} />
         </div>
       </div>
@@ -114,7 +114,7 @@ export default function Flashcards() {
     <div className="flex flex-col gap-5">
       <div className="flex flex-row justify-between items-end">
         <div className="flex flex-col gap-3">
-          <Link 
+          <Link
             to={`/sets/${set.id}`}
             className="text-gray-500 hover:text-gray-400 flex flex-row gap-1 items-center uppercase">
             <MdOutlineArrowBack /><p>Back to {set.name}</p>

@@ -9,12 +9,12 @@ import { Response } from "@remix-run/node";
 
 const setParamsSchema = z.object({
   id: z.coerce
-  .number({
-    invalid_type_error: "Set id must be an integer.",
-    required_error: "Set id is required."
-  })
-  .int("Set id must be an integer.")
-  .positive("Set id must be positive.")
+    .number({
+      invalid_type_error: "Set id must be an integer.",
+      required_error: "Set id is required."
+    })
+    .int("Set id must be an integer.")
+    .positive("Set id must be positive.")
 })
 
 export const loader = async ({ request, params }: LoaderArgs) => {
@@ -39,7 +39,10 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 export default function Set() {
   const { set } = useLoaderData<typeof loader>();
 
-  return <Outlet context={set} />
+  return <>
+    <Outlet context={set} />
+    <div className="h-[50px]" />
+  </>
 }
 
 
